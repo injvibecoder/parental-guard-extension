@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Blocked — ParentalGuard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0c14;
+      --card: #12151f;
+      --border: #1e2235;
+      --text: #e2e4ed;
+      --text2: #7880a0;
+      --red: #ef4444;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --blue: #3b82f6;
+      --green: #22c55e;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(30,34,53,0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,34,53,0.6) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0;
+    }
+
+    /* Glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(239,68,68,0.08) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .shield-wrap {
+      margin-bottom: 24px;
+    }
+
+    .shield-icon {
+      font-size: 64px;
+      display: block;
+      filter: drop-shadow(0 0 20px rgba(239,68,68,0.4));
+      animation: pulse-icon 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-icon {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(239,68,68,0.4)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(239,68,68,0.6)); }
+    }
+
+    .blocked-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .blocked-subtitle {
+      color: var(--text2);
+      font-size: 15px;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .reason-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 28px;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: var(--red);
+    }
+    .reason-badge.gambling { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.25); color: var(--orange); }
+    .reason-badge.drugs { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.25); color: var(--purple); }
+    .reason-badge.violence { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.25); color: var(--red); }
+    .reason-badge.extremism { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.25); color: var(--blue); }
+    .reason-badge.custom { background: rgba(100,116,139,0.12); border-color: rgba(100,116,139,0.25); color: #94a3b8; }
+    .reason-badge.whitelist_mode { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.25); color: var(--blue); }
+
+    .blocked-url {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--text2);
+      word-break: break-all;
+      margin-bottom: 32px;
+      text-align: left;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .blocked-url .url-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text2);
+      opacity: 0.6;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 11px 22px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); }
+    .btn-home {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .btn-home:hover { background: #2563eb; }
+
+    .brand {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--text2);
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    /* Welcome screen */
+    .welcome-card .shield-icon {
+      animation: none;
+      filter: drop-shadow(0 0 20px rgba(34,197,94,0.4));
+    }
+    .welcome-card .blocked-title { color: var(--green); }
+    .setup-steps {
+      text-align: left;
+      margin: 20px 0;
+    }
+    .setup-steps li {
+      padding: 8px 0;
+      color: var(--text2);
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .setup-steps li:last-child { border-bottom: none; }
+    .step-num {
+      background: var(--border);
+      color: var(--text);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="main-card">
+    <!-- Content injected by script -->
+  </div>
+
+<script src="blocked.js"></script>
+
+</body>
+</html>

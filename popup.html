@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParentalGuard</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- ── Lock Screen (shown when password is set and not unlocked) ── -->
+  <div id="lock-screen" class="screen hidden">
+    <div class="lock-header">
+      <div class="lock-icon">🛡️</div>
+      <h1>ParentalGuard</h1>
+      <p class="lock-subtitle">Enter admin password to manage settings</p>
+    </div>
+    <div class="lock-form">
+      <div class="input-group">
+        <input type="password" id="lock-password" placeholder="Admin password" autocomplete="current-password" maxlength="64">
+        <div id="lock-error" class="error-msg hidden">Incorrect password</div>
+      </div>
+      <button id="lock-submit" class="btn btn-primary">Unlock Settings</button>
+    </div>
+  </div>
+
+  <!-- ── Setup Screen (first run — no password set yet) ── -->
+  <div id="setup-screen" class="screen hidden">
+    <div class="lock-header">
+      <div class="lock-icon">🛡️</div>
+      <h1>Welcome to ParentalGuard</h1>
+      <p class="lock-subtitle">Set an admin password to protect your settings</p>
+    </div>
+    <div class="lock-form">
+      <div class="input-group">
+        <input type="password" id="setup-password" placeholder="Create admin password" maxlength="64">
+        <input type="password" id="setup-password-confirm" placeholder="Confirm password" maxlength="64">
+        <div id="setup-error" class="error-msg hidden">Passwords do not match</div>
+      </div>
+      <button id="setup-submit" class="btn btn-primary">Activate Protection</button>
+      <button id="setup-skip" class="btn btn-ghost">Skip (not recommended)</button>
+    </div>
+  </div>
+
+  <!-- ── Main Dashboard ── -->
+  <div id="main-screen" class="screen hidden">
+    
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="header-brand">
+        <span class="brand-icon">🛡️</span>
+        <span class="brand-name">ParentalGuard</span>
+      </div>
+      <div class="header-actions">
+        <button id="lock-btn" class="icon-btn" title="Lock settings">🔒</button>
+      </div>
+    </header>
+
+    <!-- Protection Toggle -->
+    <section class="section protection-section">
+      <div class="protection-row">
+        <div class="protection-info">
+          <span id="protection-icon" class="status-icon">✅</span>
+          <div>
+            <div class="protection-label" id="protection-label">Protection Active</div>
+            <div class="protection-sub">All categories enabled</div>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="protection-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="filters">Filters</button>
+      <button class="tab-btn" data-tab="sites">Sites</button>
+      <button class="tab-btn" data-tab="logs">
+        Logs
+        <span id="log-badge" class="badge hidden">0</span>
+      </button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
+
+    <!-- Tab: Filters -->
+    <div id="tab-filters" class="tab-content active">
+      
+      <div class="subsection">
+        <div class="subsection-title">Content Categories</div>
+        
+        <div class="category-item">
+          <div class="category-info">
+            <span class="cat-icon">🔞</span>
+            <div>
+              <div class="cat-name">Adult Content</div>
+              <div class="cat-desc">Pornography, nudity, explicit material</div>
+            </div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" class="category-toggle" data-category="adult" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="category-item">
+          <div class="category-info">
+            <span class="cat-icon">🎰</span>
+            <div>
+              <div class="cat-name">Gambling</div>
+              <div class="cat-desc">Casinos, sports betting, poker</div>
+            </div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" class="category-toggle" data-category="gambling" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="category-item">
+          <div class="category-info">
+            <span class="cat-icon">💊</span>
+            <div>
+              <div class="cat-name">Drugs</div>
+              <div class="cat-desc">Illegal substances, drug markets</div>
+            </div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" class="category-toggle" data-category="drugs" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="category-item">
+          <div class="category-info">
+            <span class="cat-icon">⚠️</span>
+            <div>
+              <div class="cat-name">Violence &amp; Gore</div>
+              <div class="cat-desc">Graphic violence, gore sites</div>
+            </div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" class="category-toggle" data-category="violence" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="category-item">
+          <div class="category-info">
+            <span class="cat-icon">🚫</span>
+            <div>
+              <div class="cat-name">Extremism</div>
+              <div class="cat-desc">Hate groups, terrorist content</div>
+            </div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" class="category-toggle" data-category="extremism" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Search &amp; Video Protection</div>
+        
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">🔍 Safe Search</div>
+            <div class="setting-desc">Force safe search on Google, Bing, DuckDuckGo</div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" id="safe-search-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">▶️ YouTube Restriction</div>
+            <div class="setting-desc">Block age-restricted and harmful YouTube content</div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" id="youtube-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Sites -->
+    <div id="tab-sites" class="tab-content">
+
+      <div class="subsection">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">🔒 Whitelist Mode</div>
+            <div class="setting-desc">Block ALL sites except approved ones</div>
+          </div>
+          <label class="toggle-switch sm">
+            <input type="checkbox" id="whitelist-mode-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Whitelist -->
+      <div class="subsection">
+        <div class="subsection-title">Allowed Sites (Whitelist)</div>
+        <div class="domain-input-row">
+          <input type="text" id="whitelist-input" placeholder="example.com" maxlength="253">
+          <button id="whitelist-add" class="btn btn-sm btn-success">+ Add</button>
+        </div>
+        <div id="whitelist-list" class="domain-list">
+          <div class="empty-state">No sites in whitelist</div>
+        </div>
+      </div>
+
+      <!-- Custom Blacklist -->
+      <div class="subsection">
+        <div class="subsection-title">Blocked Sites (Custom)</div>
+        <div class="domain-input-row">
+          <input type="text" id="blacklist-input" placeholder="example.com" maxlength="253">
+          <button id="blacklist-add" class="btn btn-sm btn-danger">+ Block</button>
+        </div>
+        <div id="blacklist-list" class="domain-list">
+          <div class="empty-state">No custom blocked sites</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Activity Logs -->
+    <div id="tab-logs" class="tab-content">
+      <div class="logs-header">
+        <span class="subsection-title">Blocked Attempts</span>
+        <button id="clear-logs-btn" class="btn btn-sm btn-ghost">Clear</button>
+      </div>
+      <div id="log-list" class="log-list">
+        <div class="empty-state">No blocked attempts yet</div>
+      </div>
+    </div>
+
+    <!-- Tab: Settings -->
+    <div id="tab-settings" class="tab-content">
+      <div class="subsection">
+        <div class="subsection-title">Admin Password</div>
+        <div class="input-group">
+          <input type="password" id="new-password" placeholder="New password" maxlength="64">
+          <input type="password" id="confirm-password" placeholder="Confirm new password" maxlength="64">
+          <div id="pw-error" class="error-msg hidden"></div>
+          <div id="pw-success" class="success-msg hidden">Password updated!</div>
+        </div>
+        <button id="change-password-btn" class="btn btn-primary" style="width:100%;margin-top:8px">
+          Update Password
+        </button>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">About</div>
+        <div class="about-info">
+          <div class="about-row"><span>Version</span><span>1.0.0</span></div>
+          <div class="about-row"><span>Status</span><span id="about-status" class="status-active">Active</span></div>
+          <div class="about-row"><span>Rules Engine</span><span>Manifest V3</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-screen -->
+
+  <script src="popup.js"></script>
+</body>
+</html>
